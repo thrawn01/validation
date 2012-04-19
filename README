@@ -1,0 +1,25 @@
+An Idea for a validation library for use in webservices
+The current implementation does not preform type cast, just validation
+    
+val = Validate(MultiDict([(u'size', u'0')]))
+
+# =====
+# Any validation failure will result in HTTPPreconditionFailed
+# =====
+
+# Only these parameters are allowed, all others will result in error
+val.only(['type', 'size', 'backup_id'])
+
+# 'type' parameter will only accept the following values
+val.allowed('type', ['vtype', 'mytype'])
+
+# These parameters are required
+val.required(['size', 'backup_id'])
+
+# Validate the size parameter according to some conditions
+val.validate('size', [
+    ["%(name)s must be an integer", lambda i: not isinstance(int(i), int)],
+    ["%(name)s cannot be negative", lambda i: int(i) < 0 ],
+    ["%(name)s cannot exceed max value", lambda i: int(i) > 1024 ]
+])
+
